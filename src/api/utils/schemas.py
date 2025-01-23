@@ -6,8 +6,8 @@ class ProductBaseModel(BaseModel):
     description: Optional[str]
     price: int
 
-class ProductCreateModel(ProductBaseModel):
-    user_id: int
+# class ProductCreateModel(ProductBaseModel):
+#     user_id: int
 
 class ProductUpdateModel(BaseModel):
     name: Optional[str]

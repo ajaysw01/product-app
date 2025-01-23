@@ -26,7 +26,7 @@ def show(id: int, db: Session):
                             detail=f"User with the id {id} is not available")
     return user
 
-def delete(id: int, db: Session, current_user: schemas.User = Depends(oauth2.get_current_user)):
+def delete(id: int, db: Session, current_user: schemas.User):
     user = db.query(models.User).filter(models.User.id == id).first()
 
     if not user:
@@ -46,7 +46,7 @@ def delete(id: int, db: Session, current_user: schemas.User = Depends(oauth2.get
     db.commit()
     return {"message": "User deleted successfully"}
 
-def update(id: int, request: schemas.UserUpdateModel, db: Session, current_user: schemas.User = Depends(oauth2.get_current_user)):
+def update(id: int, request: schemas.UserUpdateModel, db: Session, current_user: schemas.User):
     user = db.query(models.User).filter(models.User.id == id).first()
 
     if not user:

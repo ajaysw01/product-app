@@ -9,17 +9,18 @@ def get_all(db: Session):
     products = db.query(models.Product).all()
     return products
 
-def add_product(request: schemas.ProductCreateModel, db: Session, current_user: models.User = Depends(oauth2.get_current_user)):
+def add_product(request: schemas.ProductBaseModel, db: Session, current_user: models.User):
     new_product = models.Product(
         name=request.name,
         description=request.description,
         price=request.price,
-        user_id=current_user.id  
+        user_id=current_user.id 
     )
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
     return new_product
+
 
 def remove_product(id: int, db: Session):
     product = db.query(models.Product).filter(models.Product.id == id).first()

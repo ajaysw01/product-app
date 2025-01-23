@@ -23,9 +23,9 @@ def get_user(id: int, db: Session = Depends(get_db), current_user: schemas.User 
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {id} not found.")
     return user
 
-@router.put('/{id}', response_model=schemas.UserResponseModel, status_code=status.HTTP_200_OK)
+@router.patch('/{id}', response_model=schemas.UserUpdateModel, status_code=status.HTTP_200_OK)
 def update_user(id: int, request: schemas.UserUpdateModel, db: Session = Depends(get_db), current_user: schemas.User = Depends(oauth2.get_current_user)):
-    return userrepository.update(id, request, db)
+    return userrepository.update(id, request, db, current_user)
 
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_user(id: int, db: Session = Depends(get_db), current_user: schemas.User = Depends(oauth2.get_current_user)):
@@ -35,4 +35,4 @@ def delete_user(id: int, db: Session = Depends(get_db), current_user: schemas.Us
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to delete this user"
         )
-    return userrepository.delete(id, db)
+    return userrepository.delete(id, db, current_user)
