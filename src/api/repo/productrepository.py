@@ -14,7 +14,7 @@ def add_product(request: schemas.ProductBaseModel, db: Session, current_user: mo
         name=request.name,
         description=request.description,
         price=request.price,
-        user_id=current_user.id 
+        user_id=current_user.id  
     )
     db.add(new_product)
     db.commit()
