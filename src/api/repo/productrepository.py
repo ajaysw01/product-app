@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status,Depends
-from src.api.db import  models
+from fastapi import HTTPException, status, Depends
+from src.api.db import models
 from src.api.utils import schemas
 from src.api.auth import oauth2
 
@@ -9,19 +9,19 @@ def get_all(db: Session):
     products = db.query(models.Product).all()
     return products
 
-def create_product(request: schemas.ProductCreateModel, db: Session, current_user: models.User = Depends(oauth2.get_current_user)):
+def add_product(request: schemas.ProductCreateModel, db: Session, current_user: models.User = Depends(oauth2.get_current_user)):
     new_product = models.Product(
         name=request.name,
         description=request.description,
         price=request.price,
-        user_id=current_user.id  # Dynamically set user_id from the current user
+        user_id=current_user.id  
     )
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
     return new_product
 
-def destroy(id: int, db: Session):
+def remove_product(id: int, db: Session):
     product = db.query(models.Product).filter(models.Product.id == id).first()
 
     if not product:
@@ -34,7 +34,7 @@ def destroy(id: int, db: Session):
     db.commit()
     return {"message": "Product deleted successfully"}
 
-def update(id: int, request: schemas.ProductUpdateModel, db: Session):
+def update_product(id: int, request: schemas.ProductUpdateModel, db: Session):
     product = db.query(models.Product).filter(models.Product.id == id).first()
 
     if not product:
@@ -54,7 +54,7 @@ def update(id: int, request: schemas.ProductUpdateModel, db: Session):
     db.refresh(product)
     return product
 
-def show(id: int, db: Session):
+def get_product(id: int, db: Session):
     product = db.query(models.Product).filter(models.Product.id == id).first()
     if not product:
         raise HTTPException(

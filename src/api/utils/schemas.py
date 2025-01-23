@@ -26,10 +26,13 @@ class User(BaseModel):
     email: str
     password: str
 
-class ShowUser(BaseModel):
+class UserResponseModel(BaseModel):
     name: str
     email: str
-    products: Optional[List[ProductBaseModel]] = None  # Make it optional
+    products: Optional[List[ProductBaseModel]] = None  
+
+class UserUpdateModel(BaseModel):
+    name: str
 
 
 class Login(BaseModel):
