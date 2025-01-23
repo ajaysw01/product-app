@@ -19,9 +19,9 @@ def get_all_products(db: Session = Depends(get_db), current_user: schemas.User =
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 def create_product(
-    request: schemas.ProductBaseModel, 
-    db: Session = Depends(get_db), 
-    current_user: models.User = Depends(oauth2.get_current_user)  
+    request: schemas.ProductBaseModel,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(oauth2.get_current_user),
 ):
     return productrepository.add_product(request, db, current_user)
 
