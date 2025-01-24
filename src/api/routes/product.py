@@ -18,9 +18,14 @@ router = APIRouter(prefix="/products", tags=["Products"])
 
 get_db = database.get_db
 
+
 @router.get("/", response_model=List[schemas.ProductResponseModel])
-def get_all_products(db: Session = Depends(get_db), current_user: schemas.User = Depends(oauth2.get_current_user)):
+def get_all_products(
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
+):
     return productrepository.get_all(db)
+
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def create_product(
@@ -30,13 +35,15 @@ def create_product(
 ):
     return productrepository.add_product(request, db, current_user)
 
+
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_product(
-    id: int, 
-    db: Session = Depends(get_db), 
+    id: int,
+    db: Session = Depends(get_db),
     current_user: schemas.User = Depends(oauth2.get_current_user),
 ):
     return productrepository.remove_product(id, db)
+
 
 @router.put("/{id}", status_code=status.HTTP_202_ACCEPTED)
 def update_product(
@@ -47,13 +54,16 @@ def update_product(
 ):
     return productrepository.update_product(id, request, db)
 
+
 @router.get("/export", status_code=status.HTTP_200_OK)
 def export_products_to_file(
     format: str = "csv",  # Default format is CSV
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(oauth2.get_current_user),
 ):
-    products = db.query(models.Product).filter(models.Product.user_id == current_user.id).all()
+    products = (
+        db.query(models.Product).filter(models.Product.user_id == current_user.id).all()
+    )
 
     if not products:
         raise HTTPException(
@@ -74,14 +84,24 @@ def export_products_to_file(
 
     return {"message": f"Products exported successfully to {file_path}"}
 
+
 def _export_to_csv(products, timestamp):
     file_path = os.path.join(EXPORT_FOLDER, f"products_{timestamp}.csv")
     with open(file_path, mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         writer.writerow(["ID", "Name", "Description", "Price", "User ID"])
         for product in products:
-            writer.writerow([product.id, product.name, product.description, product.price, product.user_id])
+            writer.writerow(
+                [
+                    product.id,
+                    product.name,
+                    product.description,
+                    product.price,
+                    product.user_id,
+                ]
+            )
     return file_path
+
 
 def _export_to_json(products, timestamp):
     file_path = os.path.join(EXPORT_FOLDER, f"products_{timestamp}.json")
@@ -98,6 +118,7 @@ def _export_to_json(products, timestamp):
         ]
         json.dump(product_list, file, indent=4)
     return file_path
+
 
 @router.get("/{id}", status_code=200, response_model=schemas.ProductResponseModel)
 def get_product(
